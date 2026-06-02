@@ -1,0 +1,29 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "RSM Wave Valley Backend",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.21.2",
+    "nodemailer": "^8.0.10",
+    "pdfkit": "^0.18.0",
+    "puppeteer": "^25.1.0",
+    "qrcode": "^1.5.4",
+    "razorpay": "^2.9.6",
+    "twilio": "^6.0.2",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prisma": "^6.9.0"
+  }
+}

@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+
+  id             Int       @id @default(autoincrement())
+
+  bookingId      String    @unique
+
+  name           String
+
+  email          String
+
+  mobile         String
+
+  peopleCount    Int
+
+  visitDate      DateTime
+
+  totalAmount    Float
+
+  paymentStatus  String    @default("PENDING")
+
+  isCheckedIn    Boolean   @default(false)
+
+  checkedInAt    DateTime?
+
+  createdAt      DateTime  @default(now())
+
+  updatedAt      DateTime  @updatedAt
+
+  payment        Payment?
+
+  ticket         Ticket?
+
+  @@index([visitDate])
+  @@index([createdAt])
+  @@index([paymentStatus, isCheckedIn])
+}
+
+model Payment {
+
+  id                    Int       @id @default(autoincrement())
+
+  bookingId             Int       @unique
+
+  razorpayOrderId       String
+
+  razorpayPaymentId     String?   @unique
+
+  razorpaySignature     String?
+
+  status                String    @default("PENDING")
+
+  paidAt                DateTime?
+
+  booking               Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Ticket {
+
+  id             Int       @id @default(autoincrement())
+
+  bookingId      Int       @unique
+
+  ticketUrl      String
+
+  generatedAt    DateTime  @default(now())
+
+  booking        Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}

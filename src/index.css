@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* 🌊 WATER GRADIENT BACKGROUND */
+html, body {
+  overflow-x: hidden;
+}
+
+
+section {
+  scroll-margin-top: 80px;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+}
+body {
+  background: radial-gradient(circle at 20% 20%, #0ea5e9 0%, transparent 40%),
+              radial-gradient(circle at 80% 30%, #22d3ee 0%, transparent 40%),
+              radial-gradient(circle at 50% 80%, #0284c7 0%, transparent 50%),
+              #020617;
+  background-attachment: fixed;
+}
+html {
+  scroll-behavior: auto;
+}
+/* hide scrollbar */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+/* 🌊 GLASS EFFECT */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 🌊 WATER GLOW */
+.glow {
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+}
