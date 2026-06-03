@@ -16,8 +16,19 @@ const app = express();
    MIDDLEWARE
 ========================= */
 
+// const corsOptions = {
+//   origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(",") : ["http://localhost:5173", "http://localhost:3000"],
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization", "x-admin-pin"],
+//   credentials: true
+// };
 const corsOptions = {
-  origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(",") : ["http://localhost:5173", "http://localhost:3000"],
+  origin: [
+    "https://www.rsmwavevalley.in",
+    "https://rsmwavevalley.in",
+    "http://localhost:5173",
+    "http://localhost:3000"
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "x-admin-pin"],
   credentials: true
