@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!assets|favicon.ico|index.html|google96e321f3dc2bfe1f|BingSiteAuth.xml).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
