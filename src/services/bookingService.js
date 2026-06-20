@@ -11,6 +11,7 @@ export const bookingService = {
       mobile: formData.phone.replace(/\D/g, ""), // ensure standard 10-digit format
       peopleCount: Number(formData.guests),
       visitDate: formData.preferredDate, // raw string parsed on backend
+      couponCode: formData.couponCode ? formData.couponCode.trim() : undefined,
     };
 
     return await apiClient.post("/api/bookings/create", payload);
@@ -26,8 +27,8 @@ export const bookingService = {
     } catch (err) {
       console.warn("Pricing config endpoint not ready. Using production default pricing model.");
       return {
-        ticketPrice: 650,
-        adultPrice: 650,
+        ticketPrice: 600,
+        adultPrice: 600,
         childPrice: 400,
         weekendPrice: 750,
         holidayPrice: 800,

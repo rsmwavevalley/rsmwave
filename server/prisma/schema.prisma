@@ -39,6 +39,10 @@ model Booking {
 
   ticket         Ticket?
 
+  couponCode     String?
+
+  discountAmount Float     @default(0)
+
   @@index([visitDate])
   @@index([createdAt])
   @@index([paymentStatus, isCheckedIn])

@@ -53,7 +53,7 @@ const createPaymentOrder = async (req, res) => {
     }
 
     const options = {
-      amount: booking.totalAmount * 100, // in paise
+      amount: Math.round(booking.totalAmount * 100), // in paise
       currency: "INR",
       receipt: booking.bookingId
     };
@@ -127,7 +127,7 @@ const verifyPayment = async (req, res) => {
 
     try {
       /* ===================================================
-         TRANSACTION SAFETY & REPLAY PROTECTION
+         TRANSACTION SAFETY & REPLAY PROTECTION & CAPACITY
          =================================================== */
       await prisma.$transaction(async (tx) => {
         // Enforce transaction isolation
@@ -141,6 +141,28 @@ const verifyPayment = async (req, res) => {
 
         if (booking.paymentStatus === "PAID") {
           throw new Error("ALREADY_PAID");
+        }
+
+        // Enforce transaction-safe capacity validation before marking as PAID
+        const targetDate = new Date(booking.visitDate);
+        const startOfDay = new Date(targetDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(targetDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const bookingsResult = await tx.booking.aggregate({
+          _sum: { peopleCount: true },
+          where: {
+            paymentStatus: "PAID",
+            visitDate: { gte: startOfDay, lte: endOfDay }
+          }
+        });
+
+        const totalSold = bookingsResult._sum.peopleCount || 0;
+        const proposedCount = booking.peopleCount;
+
+        if (totalSold + proposedCount > 1000) {
+          throw new Error("CAPACITY_EXCEEDED");
         }
 
         // Update status
@@ -162,6 +184,8 @@ const verifyPayment = async (req, res) => {
             paidAt: new Date()
           }
         });
+      }, {
+        isolationLevel: "Serializable"
       });
 
       updatedBooking = await prisma.booking.findUnique({
@@ -175,6 +199,13 @@ const verifyPayment = async (req, res) => {
       }
       if (dbError.message === "ALREADY_PAID") {
         return res.status(400).json({ success: false, message: "This booking has already been processed and marked PAID." });
+      }
+      if (dbError.message === "CAPACITY_EXCEEDED") {
+        console.warn(`[PAYMENT VERIFICATION REJECTED] Capacity limit reached. Booking: ${bookingId}`);
+        return res.status(400).json({
+          success: false,
+          message: "Payment verification failed: Selected visit date capacity exceeded."
+        });
       }
       if (dbError.code === "P2002") {
         console.warn(`[REPLAY ATTACK BLOCKED] Duplicate payment token detected: ${razorpay_payment_id}`);

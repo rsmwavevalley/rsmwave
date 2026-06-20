@@ -8,7 +8,7 @@
  */
 const validateBookingCreation = (req, res, next) => {
   try {
-    const { name, email, mobile, peopleCount, visitDate } = req.body;
+    const { name, email, mobile, peopleCount, visitDate, couponCode } = req.body;
 
     // 1. Name check
     if (!name || typeof name !== "string" || name.trim().length < 2) {
@@ -48,12 +48,23 @@ const validateBookingCreation = (req, res, next) => {
       return res.status(400).json({ success: false, message: "Selected visit date cannot be in the past." });
     }
 
+    // 6. Coupon code validation & normalization
+    let normalizedCoupon = null;
+    if (couponCode !== undefined && couponCode !== null && String(couponCode).trim() !== "") {
+      normalizedCoupon = String(couponCode).trim().toUpperCase();
+      const allowedCoupons = ["OMGS", "RAZAMS", "JOBEEFIE"];
+      if (!allowedCoupons.includes(normalizedCoupon)) {
+        return res.status(400).json({ success: false, message: "Invalid coupon code. Supported coupons are: OMGS, RAZAMS, JOBEEFIE." });
+      }
+    }
+
     // Sanitize and write normalized values back to request body for controller use
     req.body.name = name.trim();
     req.body.email = email.trim().toLowerCase();
     req.body.mobile = numericMobile;
     req.body.peopleCount = count;
     req.body.visitDate = bookingDate;
+    req.body.couponCode = normalizedCoupon;
 
     next();
   } catch (err) {

@@ -23,13 +23,14 @@ export const useBooking = () => {
     preferredDate: "",
     message: "",
   });
+  const [couponCode, setCouponCode] = useState("");
 
   const [errors, setErrors] = useState({});
   const [bookingState, setBookingState] = useState(BOOKING_STATES.DRAFT);
   const [apiError, setApiError] = useState(null);
 
   // 2. Dynamic Configurations (Pricing & Capacity)
-  const [pricingConfig, setPricingConfig] = useState({ ticketPrice: 650 });
+  const [pricingConfig, setPricingConfig] = useState({ ticketPrice: 600 });
   const [capacityInfo, setCapacityInfo] = useState({ totalCapacity: 1000, remainingCapacity: 1000, soldOut: false });
   const [loadingCapacity, setLoadingCapacity] = useState(false);
 
@@ -75,8 +76,12 @@ export const useBooking = () => {
   }, [formData.preferredDate]);
 
   // Real-time pricing calculations based on configurator
-  const ticketCost = pricingConfig.ticketPrice || 650;
-  const totalAmount = formData.guests * ticketCost;
+  const ticketCost = pricingConfig.ticketPrice || 600;
+  const isCouponValid = ["OMGS", "RAZAMS", "JOBEEFIE"].includes(couponCode.trim().toUpperCase());
+  const discountPerPerson = isCouponValid ? 100 : 0;
+  const baseAmount = formData.guests * ticketCost;
+  const discountAmount = formData.guests * discountPerPerson;
+  const totalAmount = baseAmount - discountAmount;
 
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -139,6 +144,7 @@ export const useBooking = () => {
    */
   const resetForm = () => {
     setFormData({ name: "", phone: "", email: "", guests: 2, preferredDate: "", message: "" });
+    setCouponCode("");
     setErrors({});
     setBookingState(BOOKING_STATES.DRAFT);
     setApiError(null);
@@ -163,7 +169,7 @@ export const useBooking = () => {
 
     try {
       // Step 1: Create local reservation inside the database
-      const bookingResponse = await bookingService.createBooking(formData);
+      const bookingResponse = await bookingService.createBooking({ ...formData, couponCode });
       activeBooking = bookingResponse.booking;
       
       setBookingState(BOOKING_STATES.PAYMENT_PENDING);
@@ -241,6 +247,10 @@ export const useBooking = () => {
     loadingCapacity,
     successPayload,
     totalAmount,
+    baseAmount,
+    discountAmount,
+    couponCode,
+    setCouponCode,
     updateField,
     resetForm,
     handleBookingSubmit,

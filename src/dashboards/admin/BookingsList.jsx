@@ -151,7 +151,9 @@ export default function BookingsList() {
                     <th className="py-3 px-4">Phone</th>
                     <th className="py-3 px-4">Visit Date</th>
                     <th className="py-3 px-4">Guests</th>
-                    <th className="py-3 px-4">Amount</th>
+                    <th className="py-3 px-4">Coupon</th>
+                    <th className="py-3 px-4">Discount</th>
+                    <th className="py-3 px-4">Final Paid</th>
                     <th className="py-3 px-4">Payment</th>
                     <th className="py-3 px-4">Status</th>
                     <th className="py-3 px-4 text-center">Actions</th>
@@ -167,6 +169,8 @@ export default function BookingsList() {
                         {new Date(item.visitDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                       </td>
                       <td className="py-4 px-4 font-bold text-center">{item.peopleCount}</td>
+                      <td className="py-4 px-4 font-semibold text-slate-700">{item.couponCode || "-"}</td>
+                      <td className="py-4 px-4 font-bold text-slate-600">{item.discountAmount ? `₹${item.discountAmount}` : "-"}</td>
                       <td className="py-4 px-4 font-bold text-slate-900">₹{item.totalAmount.toLocaleString("en-IN")}</td>
                       <td className="py-4 px-4">
                         <span className={`text-[10px] font-black px-2.5 py-1 rounded uppercase border
@@ -239,8 +243,8 @@ export default function BookingsList() {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 block font-bold uppercase">Guests & Amount</span>
-                    <span className="font-bold text-slate-900">{item.peopleCount} Slots / ₹{item.totalAmount}</span>
+                    <span className="text-[10px] text-slate-400 block font-bold uppercase">Guests & Pricing</span>
+                    <span className="font-bold text-slate-900">{item.peopleCount} Guests {item.couponCode ? `(${item.couponCode})` : ""} / Paid: ₹{item.totalAmount}</span>
                   </div>
                 </div>
 

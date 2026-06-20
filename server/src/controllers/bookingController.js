@@ -7,7 +7,7 @@ const generateBookingId = require("../utils/generateBookingId");
  * Removes all mock fallbacks.
  */
 const createBooking = async (req, res) => {
-  const { name, email, mobile, peopleCount, visitDate } = req.body;
+  const { name, email, mobile, peopleCount, visitDate, couponCode } = req.body;
 
   try {
     /* =========================
@@ -21,7 +21,10 @@ const createBooking = async (req, res) => {
       });
     }
 
-    const totalAmount = Number(peopleCount) * 650;
+    const count = Number(peopleCount);
+    const baseAmount = count * 600;
+    const discountAmount = couponCode ? (count * 100) : 0;
+    const totalAmount = baseAmount - discountAmount;
     const bookingId = generateBookingId();
 
     console.log(`[BOOKING INITIATION] Guest: ${name}, Count: ${peopleCount}, Date: ${visitDate}, Amount: ₹${totalAmount}`);
@@ -68,6 +71,8 @@ const createBooking = async (req, res) => {
           peopleCount: proposedCount,
           visitDate: targetDate,
           totalAmount,
+          couponCode,
+          discountAmount,
           paymentStatus: "PENDING"
         }
       });

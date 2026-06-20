@@ -7,8 +7,8 @@ const getPricingConfig = async (req, res) => {
     // TODO: Connect this to a backend database table if pricing needs to be dynamically adjusted by administrators.
     // Standard system V1 operational pricing is hardcoded below.
     return res.status(200).json({
-      ticketPrice: 650,
-      adultPrice: 650,
+      ticketPrice: 600,
+      adultPrice: 600,
       childPrice: 400,
       weekendPrice: 750,
       holidayPrice: 800,
